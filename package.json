@@ -3,6 +3,18 @@
   "version": "0.1.0",
   "description": "MCP server for nimap network documentation",
   "license": "AGPL-3.0-only",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nimap-dev/mcp.git"
+  },
+  "homepage": "https://github.com/nimap-dev/mcp#readme",
+  "bugs": "https://github.com/nimap-dev/mcp/issues",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "nimap",
+    "network-documentation"
+  ],
   "type": "module",
   "bin": {
     "nimap-mcp": "dist/index.js"
@@ -19,10 +31,11 @@
   },
   "scripts": {
     "generate": "pnpm dlx openapi-typescript@7.13.0 nimap-openapi.yaml -o src/api/schema.ts",
-    "build": "tsc",
+    "build": "rm -rf dist && tsc",
     "typecheck": "tsc --noEmit",
+    "test": "node --test \"src/**/*.test.ts\"",
     "format": "prettier --write .",
-    "test": "node --test \"src/**/*.test.ts\""
+    "prepublishOnly": "pnpm build && pnpm test"
   },
   "devEngines": {
     "packageManager": {
