@@ -1,0 +1,3222 @@
+components:
+  schemas:
+    APIKey:
+      additionalProperties: false
+      properties:
+        createdAt:
+          format: date-time
+          type: string
+        expiresAt:
+          description: When the key stops working; absent never expires
+          format: date-time
+          type: string
+        id:
+          type: string
+        lastUsedAt:
+          description: When the key last authenticated a request, to the minute
+          format: date-time
+          type: string
+        name:
+          type: string
+        prefix:
+          description: The start of the key, to tell keys apart
+          type: string
+      required:
+        - id
+        - name
+        - prefix
+        - createdAt
+      type: object
+    Address:
+      additionalProperties: false
+      properties:
+        city:
+          type: string
+        country:
+          description: ISO 3166-1 alpha-2 country code
+          pattern: ^[A-Za-z]{2}$
+          type: string
+        street:
+          type: string
+        zip:
+          description: Postal code, in whatever shape the country writes it
+          type: string
+      type: object
+    AssetAttachmentResponse:
+      additionalProperties: false
+      properties:
+        asset:
+          $ref: "#/components/schemas/AssetResponse"
+        caption:
+          type: string
+        id:
+          type: string
+      required:
+        - id
+        - asset
+      type: object
+    AssetResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/AssetResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        byteSize:
+          format: int64
+          type: integer
+        contentType:
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        height:
+          format: int32
+          type: integer
+        id:
+          type: string
+        originalFilename:
+          type: string
+        title:
+          type: string
+        type:
+          enum:
+            - image
+            - video
+            - audio
+            - document
+            - other
+          type: string
+        width:
+          format: int32
+          type: integer
+      required:
+        - id
+        - title
+        - originalFilename
+        - contentType
+        - type
+        - byteSize
+        - createdAt
+      type: object
+    AuthProviders:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/AuthProviders.json
+          format: uri
+          readOnly: true
+          type: string
+        oidc:
+          $ref: "#/components/schemas/OIDCProviderInfo"
+          description: Single sign-on, absent when disabled
+        password:
+          description: Username and password login is available
+          type: boolean
+      required:
+        - password
+      type: object
+    BuildingResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/BuildingResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        address:
+          $ref: "#/components/schemas/Address"
+        createdAt:
+          format: date-time
+          type: string
+        footprint:
+          $ref: "#/components/schemas/MultiPolygon"
+        id:
+          type: string
+        locationId:
+          type: string
+        name:
+          type: string
+        notes:
+          type: string
+        representativePoint:
+          $ref: "#/components/schemas/Point"
+        status:
+          enum:
+            - planned
+            - active
+            - decommissioned
+            - archived
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - footprint
+        - representativePoint
+        - status
+        - createdAt
+        - updatedAt
+      type: object
+    CreateAPIKeyInputBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/CreateAPIKeyInputBody.json
+          format: uri
+          readOnly: true
+          type: string
+        expiresAt:
+          description: When the key stops working, in the future; omit it for a key that never expires
+          format: date-time
+          type: string
+        name:
+          description: What the key is for, such as Ansible
+          maxLength: 100
+          minLength: 1
+          type: string
+      required:
+        - name
+      type: object
+    CreateBuildingRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/CreateBuildingRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        address:
+          $ref: "#/components/schemas/Address"
+        footprint:
+          $ref: "#/components/schemas/MultiPolygon"
+        locationId:
+          description: The location this building stands in; omit for one that has not been placed yet
+          type: string
+        name:
+          minLength: 1
+          type: string
+        notes:
+          type: string
+        status:
+          enum:
+            - planned
+            - active
+            - decommissioned
+            - archived
+          type: string
+      required:
+        - name
+        - footprint
+        - status
+      type: object
+    CreateDeviceModelRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/CreateDeviceModelRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        depthMm:
+          format: int32
+          minimum: 1
+          type: integer
+        deviceTypeId:
+          type: string
+        displayName:
+          description: A friendlier name shown instead of the model name, such as hAP ax² for C52iG-5HaxD2HaxD-TC
+          type: string
+        endOfSale:
+          description: The day the manufacturer stops selling the model (EOS)
+          format: date
+          type: string
+        endOfSupport:
+          description: The day the manufacturer stops supporting the model (EOL); not before endOfSale
+          format: date
+          type: string
+        heightMm:
+          format: int32
+          minimum: 1
+          type: integer
+        manufacturerId:
+          type: string
+        mounting:
+          enum:
+            - rack
+            - wall
+            - desktop
+            - din_rail
+            - ceiling
+            - pole
+            - embedded
+            - other
+          type: string
+        name:
+          minLength: 1
+          type: string
+        notes:
+          type: string
+        partNumber:
+          type: string
+        poeBudgetWatts:
+          description: Total power the model can supply over PoE, in watts; only with poeOut
+          format: int32
+          minimum: 1
+          type: integer
+        poeIn:
+          description: Can be powered over Ethernet
+          type: boolean
+        poeInStandard:
+          description: The PoE standard the model needs when powered over Ethernet; only with poeIn
+          enum:
+            - af
+            - at
+            - bt
+            - passive
+          type: string
+        poeOut:
+          description: Can power other devices over Ethernet
+          type: boolean
+        poeOutStandard:
+          description: The highest PoE standard the model supplies; only with poeOut
+          enum:
+            - af
+            - at
+            - bt
+            - passive
+          type: string
+        powerWattsMax:
+          description: Maximum power draw in watts
+          format: int32
+          minimum: 1
+          type: integer
+        rackUnits:
+          format: int32
+          minimum: 1
+          type: integer
+        status:
+          enum:
+            - planned
+            - active
+            - decommissioned
+            - archived
+          type: string
+        variant:
+          description: A hardware revision or variant sold under the same name, such as rev 2
+          type: string
+        website:
+          description: The model's page on the manufacturer's site
+          type: string
+        widthMm:
+          format: int32
+          minimum: 1
+          type: integer
+      required:
+        - deviceTypeId
+        - manufacturerId
+        - name
+        - status
+      type: object
+    CreateDeviceRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/CreateDeviceRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        code:
+          description: Leave it out or empty to get the next code of the device's type, such as SW-004. A code given here is used as is and does not move the type's counter.
+          type: string
+        deviceModelId:
+          description: Exactly one of deviceModelId and deviceTypeId; the type then comes from the model
+          type: string
+        deviceTypeId:
+          description: Exactly one of deviceModelId and deviceTypeId; for a device without a model
+          type: string
+        hostname:
+          description: DNS name; stored in lowercase
+          type: string
+        inventoryNumber:
+          type: string
+        managementIp:
+          description: One IPv4 or IPv6 address, not a network
+          type: string
+        name:
+          minLength: 1
+          type: string
+        notes:
+          type: string
+        physicalLabel:
+          description: What is actually written on the device
+          type: string
+        serialNumber:
+          type: string
+        status:
+          enum:
+            - planned
+            - active
+            - decommissioned
+            - archived
+          type: string
+      required:
+        - name
+        - status
+      type: object
+    CreateLocationRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/CreateLocationRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        address:
+          $ref: "#/components/schemas/Address"
+        area:
+          $ref: "#/components/schemas/MultiPolygon"
+          description: The boundary of the location; omit for one whose extent nobody has established yet
+        name:
+          minLength: 1
+          type: string
+        notes:
+          type: string
+        parentId:
+          description: The location this one sits inside; omit for a location that stands on its own
+          type: string
+        representativePoint:
+          $ref: "#/components/schemas/Point"
+        status:
+          enum:
+            - planned
+            - active
+            - decommissioned
+            - archived
+          type: string
+      required:
+        - name
+        - status
+      type: object
+    CreateUserInputBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/CreateUserInputBody.json
+          format: uri
+          readOnly: true
+          type: string
+        email:
+          description: Account email address
+          format: email
+          type: string
+        password:
+          description: Initial account password
+          minLength: 8
+          type: string
+        role:
+          description: Role the account starts with
+          enum:
+            - viewer
+            - editor
+            - admin
+          type: string
+        username:
+          description: Account username
+          examples:
+            - admin
+          minLength: 3
+          type: string
+      required:
+        - username
+        - email
+        - password
+        - role
+      type: object
+    CreatedAPIKey:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/CreatedAPIKey.json
+          format: uri
+          readOnly: true
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        expiresAt:
+          description: When the key stops working; absent never expires
+          format: date-time
+          type: string
+        id:
+          type: string
+        lastUsedAt:
+          description: When the key last authenticated a request, to the minute
+          format: date-time
+          type: string
+        name:
+          type: string
+        prefix:
+          description: The start of the key, to tell keys apart
+          type: string
+        token:
+          description: "The whole key. It is shown only this once; send it as Authorization: Bearer <token>"
+          type: string
+      required:
+        - token
+        - id
+        - name
+        - prefix
+        - createdAt
+      type: object
+    DeviceModelRef:
+      additionalProperties: false
+      properties:
+        displayName:
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        partNumber:
+          type: string
+        variant:
+          type: string
+      required:
+        - id
+        - name
+      type: object
+    DeviceModelResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/DeviceModelResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        depthMm:
+          format: int32
+          type: integer
+        deviceType:
+          $ref: "#/components/schemas/DeviceTypeResponse"
+        displayName:
+          description: A friendlier name shown instead of the model name, such as hAP ax² for C52iG-5HaxD2HaxD-TC
+          type: string
+        endOfSale:
+          description: The day the manufacturer stops selling the model (EOS)
+          format: date
+          type: string
+        endOfSupport:
+          description: The day the manufacturer stops supporting the model (EOL); not before endOfSale
+          format: date
+          type: string
+        heightMm:
+          format: int32
+          type: integer
+        id:
+          type: string
+        manufacturer:
+          $ref: "#/components/schemas/ManufacturerResponse"
+        mounting:
+          enum:
+            - rack
+            - wall
+            - desktop
+            - din_rail
+            - ceiling
+            - pole
+            - embedded
+            - other
+          type: string
+        name:
+          type: string
+        notes:
+          type: string
+        partNumber:
+          type: string
+        poeBudgetWatts:
+          description: Total power the model can supply over PoE, in watts; only with poeOut
+          format: int32
+          type: integer
+        poeIn:
+          description: Can be powered over Ethernet
+          type: boolean
+        poeInStandard:
+          description: The PoE standard the model needs when powered over Ethernet; only with poeIn
+          enum:
+            - af
+            - at
+            - bt
+            - passive
+          type: string
+        poeOut:
+          description: Can power other devices over Ethernet
+          type: boolean
+        poeOutStandard:
+          description: The highest PoE standard the model supplies; only with poeOut
+          enum:
+            - af
+            - at
+            - bt
+            - passive
+          type: string
+        powerWattsMax:
+          description: Maximum power draw in watts
+          format: int32
+          type: integer
+        rackUnits:
+          format: int32
+          type: integer
+        status:
+          enum:
+            - planned
+            - active
+            - decommissioned
+            - archived
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        variant:
+          description: A hardware revision or variant sold under the same name, such as rev 2
+          type: string
+        website:
+          description: The model's page on the manufacturer's site
+          type: string
+        widthMm:
+          format: int32
+          type: integer
+      required:
+        - id
+        - deviceType
+        - manufacturer
+        - name
+        - poeIn
+        - poeOut
+        - status
+        - createdAt
+        - updatedAt
+      type: object
+    DeviceResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/DeviceResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        code:
+          description: Short code such as SW-001, unique regardless of case
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        deviceType:
+          $ref: "#/components/schemas/DeviceTypeResponse"
+          description: The model's type for a device with a model, the device's own otherwise
+        hostname:
+          type: string
+        id:
+          type: string
+        inventoryNumber:
+          type: string
+        managementIp:
+          description: The address the device is managed on, IPv4 or IPv6
+          type: string
+        manufacturer:
+          $ref: "#/components/schemas/ManufacturerRef"
+          description: The model's manufacturer; a device without a model has none
+        model:
+          $ref: "#/components/schemas/DeviceModelRef"
+        name:
+          type: string
+        notes:
+          type: string
+        physicalLabel:
+          description: What is actually written on the device
+          type: string
+        serialNumber:
+          type: string
+        status:
+          enum:
+            - planned
+            - active
+            - decommissioned
+            - archived
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - code
+        - name
+        - deviceType
+        - status
+        - createdAt
+        - updatedAt
+      type: object
+    DeviceTypeResponse:
+      additionalProperties: false
+      properties:
+        code:
+          type: string
+        codePrefix:
+          description: Fixed prefix of the codes of devices of this type, such as SW
+          type: string
+        color:
+          type: string
+        icon:
+          description: A lucide icon name
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        nextCode:
+          description: "The code the next device of this type would get, such as SW-004; only in the type list, and a preview: the number is taken when a device is created"
+          type: string
+        sortOrder:
+          format: int32
+          type: integer
+      required:
+        - id
+        - code
+        - name
+        - icon
+        - color
+        - sortOrder
+        - codePrefix
+      type: object
+    ErrorDetail:
+      additionalProperties: false
+      properties:
+        location:
+          description: Where the error occurred, e.g. 'body.items[3].tags' or 'path.thing-id'
+          type: string
+        message:
+          description: Error message text
+          type: string
+        value:
+          description: The value at the given location
+      type: object
+    ErrorModel:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/ErrorModel.json
+          format: uri
+          readOnly: true
+          type: string
+        detail:
+          description: A human-readable explanation specific to this occurrence of the problem.
+          examples:
+            - Property foo is required but is missing.
+          type: string
+        errors:
+          description: Optional list of individual error details
+          items:
+            $ref: "#/components/schemas/ErrorDetail"
+          type: array
+        instance:
+          description: A URI reference that identifies the specific occurrence of the problem.
+          examples:
+            - https://example.com/error-log/abc123
+          format: uri
+          type: string
+        status:
+          description: HTTP status code
+          examples:
+            - 400
+          format: int64
+          type: integer
+        title:
+          description: A short, human-readable summary of the problem type. This value should not change between occurrences of the error.
+          examples:
+            - Bad Request
+          type: string
+        type:
+          default: about:blank
+          description: A URI reference to human-readable documentation for the error.
+          examples:
+            - https://example.com/errors/example
+          format: uri
+          type: string
+      type: object
+    Identity:
+      additionalProperties: false
+      properties:
+        email:
+          description: Email the issuer reported at the last login
+          type: string
+        id:
+          type: string
+        issuer:
+          description: OIDC issuer the account belongs to
+          type: string
+        lastLoginAt:
+          description: When the account last logged in
+          format: date-time
+          type: string
+        linkedAt:
+          description: When the account was first used to log in
+          format: date-time
+          type: string
+        subject:
+          description: The account's stable id at the issuer
+          type: string
+      required:
+        - id
+        - issuer
+        - subject
+        - linkedAt
+        - lastLoginAt
+      type: object
+    LocationResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/LocationResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        address:
+          $ref: "#/components/schemas/Address"
+        area:
+          $ref: "#/components/schemas/MultiPolygon"
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        notes:
+          type: string
+        parentId:
+          type: string
+        representativePoint:
+          $ref: "#/components/schemas/Point"
+        representativePointManual:
+          type: boolean
+        status:
+          enum:
+            - planned
+            - active
+            - decommissioned
+            - archived
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - representativePointManual
+        - status
+        - createdAt
+        - updatedAt
+      type: object
+    LoginInputBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/LoginInputBody.json
+          format: uri
+          readOnly: true
+          type: string
+        password:
+          description: Account password
+          minLength: 1
+          type: string
+        username:
+          description: Account username (case-insensitive)
+          examples:
+            - admin
+          minLength: 3
+          type: string
+      required:
+        - username
+        - password
+      type: object
+    ManufacturerRef:
+      additionalProperties: false
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+      type: object
+    ManufacturerRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/ManufacturerRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        name:
+          minLength: 1
+          type: string
+        notes:
+          type: string
+        website:
+          type: string
+      required:
+        - name
+      type: object
+    ManufacturerResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/ManufacturerResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+        notes:
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        website:
+          type: string
+      required:
+        - id
+        - name
+        - createdAt
+        - updatedAt
+      type: object
+    MultiPolygon:
+      additionalProperties: false
+      properties:
+        coordinates:
+          description: An array of polygons, each an array of linear rings of [longitude, latitude] positions; a ring's first entry is its exterior boundary and the rest are holes
+          items:
+            items:
+              items:
+                items:
+                  format: double
+                  type: number
+                type: array
+              type: array
+            type: array
+          type: array
+        type:
+          description: GeoJSON geometry type
+          enum:
+            - MultiPolygon
+          type: string
+      required:
+        - type
+        - coordinates
+      type: object
+    OIDCProviderInfo:
+      additionalProperties: false
+      properties:
+        loginUrl:
+          description: Path to navigate to, accepts ?next=
+          examples:
+            - /api/auth/oidc/login
+          type: string
+        name:
+          description: Label for the login button
+          examples:
+            - SSO
+          type: string
+      required:
+        - name
+        - loginUrl
+      type: object
+    Point:
+      additionalProperties: false
+      properties:
+        coordinates:
+          description: A [longitude, latitude] position, optionally with elevation
+          items:
+            format: double
+            type: number
+          maxItems: 3
+          minItems: 2
+          type: array
+        type:
+          description: GeoJSON geometry type
+          enum:
+            - Point
+          type: string
+      required:
+        - type
+        - coordinates
+      type: object
+    Preferences:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/Preferences.json
+          format: uri
+          readOnly: true
+          type: string
+        dateFormat:
+          description: How calendar dates are written
+          enum:
+            - auto
+            - dmy_dot
+            - iso
+            - mdy_slash
+            - d_mmm_y
+            - mmm_d_y
+          type: string
+        language:
+          description: Interface language
+          enum:
+            - en
+            - cs
+          type: string
+        theme:
+          description: Colour scheme of the interface
+          enum:
+            - system
+            - light
+            - dark
+          type: string
+        timeFormat:
+          description: Whether times use a 24-hour or a 12-hour clock
+          enum:
+            - auto
+            - h24
+            - h12
+          type: string
+        timezone:
+          description: Time zone dates and times are shown in; absent follows the browser
+          enum:
+            - Etc/GMT+12
+            - Pacific/Pago_Pago
+            - Pacific/Honolulu
+            - Pacific/Marquesas
+            - America/Anchorage
+            - America/Los_Angeles
+            - America/Denver
+            - America/Phoenix
+            - America/Chicago
+            - America/Mexico_City
+            - America/New_York
+            - America/Bogota
+            - America/Halifax
+            - America/Caracas
+            - America/St_Johns
+            - America/Sao_Paulo
+            - America/Argentina/Buenos_Aires
+            - America/Noronha
+            - Atlantic/Azores
+            - Atlantic/Cape_Verde
+            - UTC
+            - Europe/London
+            - Europe/Lisbon
+            - Africa/Abidjan
+            - Europe/Prague
+            - Europe/Berlin
+            - Europe/Paris
+            - Europe/Warsaw
+            - Africa/Lagos
+            - Europe/Athens
+            - Europe/Kyiv
+            - Europe/Helsinki
+            - Africa/Cairo
+            - Africa/Johannesburg
+            - Europe/Istanbul
+            - Europe/Moscow
+            - Asia/Riyadh
+            - Africa/Nairobi
+            - Asia/Tehran
+            - Asia/Dubai
+            - Asia/Baku
+            - Asia/Kabul
+            - Asia/Karachi
+            - Asia/Tashkent
+            - Asia/Kolkata
+            - Asia/Kathmandu
+            - Asia/Dhaka
+            - Asia/Almaty
+            - Asia/Yangon
+            - Asia/Bangkok
+            - Asia/Jakarta
+            - Asia/Shanghai
+            - Asia/Singapore
+            - Australia/Perth
+            - Australia/Eucla
+            - Asia/Tokyo
+            - Asia/Seoul
+            - Australia/Darwin
+            - Australia/Adelaide
+            - Australia/Brisbane
+            - Australia/Sydney
+            - Pacific/Port_Moresby
+            - Australia/Lord_Howe
+            - Pacific/Noumea
+            - Pacific/Auckland
+            - Pacific/Fiji
+            - Pacific/Chatham
+            - Pacific/Tongatapu
+            - Pacific/Apia
+            - Pacific/Kiritimati
+          type: string
+      required:
+        - language
+        - dateFormat
+        - timeFormat
+        - theme
+      type: object
+    ResetUserPasswordInputBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/ResetUserPasswordInputBody.json
+          format: uri
+          readOnly: true
+          type: string
+        newPassword:
+          description: New account password
+          minLength: 8
+          type: string
+      required:
+        - newPassword
+      type: object
+    SuggestLocationRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/SuggestLocationRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        area:
+          $ref: "#/components/schemas/MultiPolygon"
+          description: The boundary of the place you want to find the best location for
+      required:
+        - area
+      type: object
+    SuggestLocationResponse:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/SuggestLocationResponse.json
+          format: uri
+          readOnly: true
+          type: string
+        id:
+          type: string
+        name:
+          type: string
+      required:
+        - id
+        - name
+      type: object
+    UpdateAccountInputBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/UpdateAccountInputBody.json
+          format: uri
+          readOnly: true
+          type: string
+        currentPassword:
+          description: Current account password, confirming the change; omitted when the account has none
+          type: string
+        email:
+          description: New account email address
+          format: email
+          type: string
+        username:
+          description: New account username
+          examples:
+            - admin
+          minLength: 3
+          type: string
+      required:
+        - username
+        - email
+      type: object
+    UpdateBuildingRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/UpdateBuildingRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        address:
+          $ref: "#/components/schemas/Address"
+        footprint:
+          $ref: "#/components/schemas/MultiPolygon"
+        locationId:
+          description: The location this building stands in; omit to detach it from the one it sits in now
+          type: string
+        name:
+          minLength: 1
+          type: string
+        notes:
+          type: string
+      required:
+        - name
+        - footprint
+      type: object
+    UpdateBuildingStatusRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/UpdateBuildingStatusRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        status:
+          enum:
+            - planned
+            - active
+            - decommissioned
+            - archived
+          type: string
+      required:
+        - status
+      type: object
+    UpdateDeviceModelRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/UpdateDeviceModelRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        depthMm:
+          format: int32
+          minimum: 1
+          type: integer
+        deviceTypeId:
+          type: string
+        displayName:
+          description: A friendlier name shown instead of the model name, such as hAP ax² for C52iG-5HaxD2HaxD-TC
+          type: string
+        endOfSale:
+          description: The day the manufacturer stops selling the model (EOS)
+          format: date
+          type: string
+        endOfSupport:
+          description: The day the manufacturer stops supporting the model (EOL); not before endOfSale
+          format: date
+          type: string
+        heightMm:
+          format: int32
+          minimum: 1
+          type: integer
+        manufacturerId:
+          type: string
+        mounting:
+          enum:
+            - rack
+            - wall
+            - desktop
+            - din_rail
+            - ceiling
+            - pole
+            - embedded
+            - other
+          type: string
+        name:
+          minLength: 1
+          type: string
+        notes:
+          type: string
+        partNumber:
+          type: string
+        poeBudgetWatts:
+          description: Total power the model can supply over PoE, in watts; only with poeOut
+          format: int32
+          minimum: 1
+          type: integer
+        poeIn:
+          description: Can be powered over Ethernet
+          type: boolean
+        poeInStandard:
+          description: The PoE standard the model needs when powered over Ethernet; only with poeIn
+          enum:
+            - af
+            - at
+            - bt
+            - passive
+          type: string
+        poeOut:
+          description: Can power other devices over Ethernet
+          type: boolean
+        poeOutStandard:
+          description: The highest PoE standard the model supplies; only with poeOut
+          enum:
+            - af
+            - at
+            - bt
+            - passive
+          type: string
+        powerWattsMax:
+          description: Maximum power draw in watts
+          format: int32
+          minimum: 1
+          type: integer
+        rackUnits:
+          format: int32
+          minimum: 1
+          type: integer
+        variant:
+          description: A hardware revision or variant sold under the same name, such as rev 2
+          type: string
+        website:
+          description: The model's page on the manufacturer's site
+          type: string
+        widthMm:
+          format: int32
+          minimum: 1
+          type: integer
+      required:
+        - deviceTypeId
+        - manufacturerId
+        - name
+      type: object
+    UpdateDeviceModelStatusRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/UpdateDeviceModelStatusRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        status:
+          enum:
+            - planned
+            - active
+            - decommissioned
+            - archived
+          type: string
+      required:
+        - status
+      type: object
+    UpdateDeviceRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/UpdateDeviceRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        code:
+          description: Changing the model or type never changes the code; only this field does
+          minLength: 1
+          type: string
+        deviceModelId:
+          description: Exactly one of deviceModelId and deviceTypeId; the type then comes from the model
+          type: string
+        deviceTypeId:
+          description: Exactly one of deviceModelId and deviceTypeId; for a device without a model
+          type: string
+        hostname:
+          description: DNS name; stored in lowercase
+          type: string
+        inventoryNumber:
+          type: string
+        managementIp:
+          description: One IPv4 or IPv6 address, not a network
+          type: string
+        name:
+          minLength: 1
+          type: string
+        notes:
+          type: string
+        physicalLabel:
+          description: What is actually written on the device
+          type: string
+        serialNumber:
+          type: string
+      required:
+        - code
+        - name
+      type: object
+    UpdateDeviceStatusRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/UpdateDeviceStatusRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        status:
+          enum:
+            - planned
+            - active
+            - decommissioned
+            - archived
+          type: string
+      required:
+        - status
+      type: object
+    UpdateLocationRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/UpdateLocationRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        address:
+          $ref: "#/components/schemas/Address"
+        area:
+          $ref: "#/components/schemas/MultiPolygon"
+          description: The boundary of the location; omit for one whose extent nobody has established yet
+        name:
+          minLength: 1
+          type: string
+        notes:
+          type: string
+        parentId:
+          description: The location this one sits inside; omit to move it to the top level
+          type: string
+        representativePoint:
+          $ref: "#/components/schemas/Point"
+      required:
+        - name
+      type: object
+    UpdateLocationStatusRequest:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/UpdateLocationStatusRequest.json
+          format: uri
+          readOnly: true
+          type: string
+        status:
+          enum:
+            - planned
+            - active
+            - decommissioned
+            - archived
+          type: string
+      required:
+        - status
+      type: object
+    UpdatePasswordInputBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/UpdatePasswordInputBody.json
+          format: uri
+          readOnly: true
+          type: string
+        currentPassword:
+          description: Current account password; omitted when the account has none yet
+          type: string
+        newPassword:
+          description: New account password
+          minLength: 8
+          type: string
+      required:
+        - newPassword
+      type: object
+    UpdateUserInputBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/UpdateUserInputBody.json
+          format: uri
+          readOnly: true
+          type: string
+        email:
+          description: New account email address
+          format: email
+          type: string
+        username:
+          description: New account username
+          minLength: 3
+          type: string
+      required:
+        - username
+        - email
+      type: object
+    UpdateUserRoleInputBody:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/UpdateUserRoleInputBody.json
+          format: uri
+          readOnly: true
+          type: string
+        role:
+          description: Role to move the account to
+          enum:
+            - viewer
+            - editor
+            - admin
+          type: string
+      required:
+        - role
+      type: object
+    User:
+      additionalProperties: false
+      properties:
+        $schema:
+          description: A URL to the JSON Schema for this object.
+          examples:
+            - https://example.com/schemas/User.json
+          format: uri
+          readOnly: true
+          type: string
+        createdAt:
+          format: date-time
+          type: string
+        email:
+          type: string
+        hasPassword:
+          description: Whether the account has a password; single sign-on accounts may have none
+          type: boolean
+        id:
+          type: string
+        identities:
+          description: Single sign-on accounts linked to this user
+          items:
+            $ref: "#/components/schemas/Identity"
+          type: array
+        permissions:
+          items:
+            type: string
+          type: array
+        role:
+          enum:
+            - viewer
+            - editor
+            - admin
+          type: string
+        updatedAt:
+          format: date-time
+          type: string
+        username:
+          type: string
+      required:
+        - id
+        - username
+        - email
+        - role
+        - permissions
+        - createdAt
+        - updatedAt
+        - hasPassword
+        - identities
+      type: object
+  securitySchemes:
+    apiKey:
+      description: "An API key from the account page, sent as Authorization: Bearer <key>. It acts as its user, except for the operations that need a session."
+      scheme: bearer
+      type: http
+    session:
+      description: The session cookie set by logging in through the web interface or POST /api/auth/login.
+      in: cookie
+      name: nimap_session
+      type: apiKey
+info:
+  title: nimap API
+  version: dev
+openapi: 3.1.0
+paths:
+  /api/admin/users:
+    get:
+      operationId: list-users
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/User"
+                type: array
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+      summary: Returns all user accounts
+      tags:
+        - admin
+    post:
+      operationId: create-user
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateUserInputBody"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: Created
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+      summary: Creates a user account
+      tags:
+        - admin
+  /api/admin/users/{id}:
+    delete:
+      operationId: delete-user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+      summary: Deletes the user account with the provided id
+      tags:
+        - admin
+    get:
+      operationId: get-user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+      summary: Returns the user account with the provided id
+      tags:
+        - admin
+    put:
+      operationId: update-user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserInputBody"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+      summary: Updates the username and email of the account with the provided id
+      tags:
+        - admin
+  /api/admin/users/{id}/identities/{identityId}:
+    delete:
+      description: "The user can no longer log in with that account. Logging in with it again is treated as a first login: it may be linked anew by email, or refused."
+      operationId: unlink-user-identity
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: identityId
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+      summary: Unlinks a single sign-on account from the user
+      tags:
+        - admin
+  /api/admin/users/{id}/password:
+    patch:
+      operationId: reset-user-password
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ResetUserPasswordInputBody"
+        required: true
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+      summary: Sets a new password on the account with the provided id
+      tags:
+        - admin
+  /api/admin/users/{id}/role:
+    patch:
+      operationId: update-user-role
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateUserRoleInputBody"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+      summary: Changes the role of the account with the provided id
+      tags:
+        - admin
+  /api/assets:
+    get:
+      operationId: list-assets
+      parameters:
+        - explode: false
+          in: query
+          name: resourceType
+          required: true
+          schema:
+            enum:
+              - location
+              - building
+              - device_model
+            type: string
+        - explode: false
+          in: query
+          name: resourceId
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/AssetAttachmentResponse"
+                type: array
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Lists the files attached to a location or a building
+      tags:
+        - assets
+    post:
+      operationId: upload-asset
+      parameters:
+        - in: header
+          name: Content-Disposition
+          required: true
+          schema:
+            type: string
+        - explode: false
+          in: query
+          name: title
+          schema:
+            type: string
+        - explode: false
+          in: query
+          name: resourceType
+          schema:
+            enum:
+              - location
+              - building
+              - device_model
+            type: string
+        - explode: false
+          in: query
+          name: resourceId
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/octet-stream:
+            schema:
+              contentMediaType: application/octet-stream
+              format: binary
+              type: string
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssetResponse"
+          description: Created
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Uploads a file, optionally attaching it to a location or a building
+      tags:
+        - assets
+  /api/assets/{id}/content:
+    get:
+      operationId: get-asset-content
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+        - explode: false
+          in: query
+          name: variant
+          schema:
+            enum:
+              - original
+              - thumb
+              - preview
+            type: string
+      responses:
+        "200":
+          content:
+            application/octet-stream:
+              schema:
+                contentMediaType: application/octet-stream
+                format: binary
+                type: string
+          description: The file
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Returns the bytes of the asset with the provided id
+      tags:
+        - assets
+  /api/attachments/{id}:
+    delete:
+      description: The file goes too, unless something else still points at it.
+      operationId: delete-asset-attachment
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Removes a file from the location or building it is attached to
+      tags:
+        - assets
+  /api/auth/account:
+    put:
+      operationId: update-account
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAccountInputBody"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+      summary: Update the current user's username and email
+      tags:
+        - auth
+  /api/auth/account/password:
+    patch:
+      operationId: update-password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdatePasswordInputBody"
+        required: true
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+      summary: Change the current user's password
+      tags:
+        - auth
+  /api/auth/account/preferences:
+    get:
+      operationId: get-account-preferences
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Preferences"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Return the current user's display preferences
+      tags:
+        - auth
+    put:
+      operationId: update-account-preferences
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Preferences"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Preferences"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Update the current user's display preferences
+      tags:
+        - auth
+  /api/auth/api-keys:
+    get:
+      operationId: list-api-keys
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/APIKey"
+                type: array
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+      summary: Returns the current user's API keys
+      tags:
+        - auth
+    post:
+      description: The key acts as the user, with the user's role, everywhere but the operations that need a session. The response is the only time the whole key is returned.
+      operationId: create-api-key
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAPIKeyInputBody"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreatedAPIKey"
+          description: Created
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+      summary: Creates an API key for the current user
+      tags:
+        - auth
+  /api/auth/api-keys/{id}:
+    delete:
+      operationId: delete-api-key
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+      summary: Revokes one of the current user's API keys
+      tags:
+        - auth
+  /api/auth/login:
+    post:
+      operationId: login
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInputBody"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Log in with username and password
+      tags:
+        - auth
+  /api/auth/logout:
+    post:
+      operationId: logout
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: Log out and end the current session
+      tags:
+        - auth
+  /api/auth/me:
+    get:
+      operationId: get-current-user
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Return the currently authenticated user
+      tags:
+        - auth
+  /api/auth/providers:
+    get:
+      operationId: list-auth-providers
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthProviders"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      summary: List the available login methods
+      tags:
+        - auth
+  /api/buildings:
+    get:
+      operationId: list-buildings
+      parameters:
+        - description: Lifecycle statuses to include. Defaults to planned and active, which keeps decommissioned and archived buildings off the map and out of the default lists without hiding them from a direct lookup.
+          explode: false
+          in: query
+          name: status
+          schema:
+            description: Lifecycle statuses to include. Defaults to planned and active, which keeps decommissioned and archived buildings off the map and out of the default lists without hiding them from a direct lookup.
+            items:
+              enum:
+                - planned
+                - active
+                - decommissioned
+                - archived
+              type: string
+            type: array
+        - description: Only return buildings sitting in this location. Omit it to list buildings across every location.
+          explode: false
+          in: query
+          name: locationId
+          schema:
+            description: Only return buildings sitting in this location. Omit it to list buildings across every location.
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/BuildingResponse"
+                type: array
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Returns all buildings, optionally narrowed to a single location
+      tags:
+        - buildings
+    post:
+      operationId: create-building
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBuildingRequest"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuildingResponse"
+          description: Created
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Creates a building
+      tags:
+        - buildings
+  /api/buildings/{id}:
+    delete:
+      operationId: delete-building
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Deletes the building with the provided id
+      tags:
+        - buildings
+    get:
+      operationId: get-building
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuildingResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Returns building with the provided id
+      tags:
+        - buildings
+    put:
+      operationId: update-building
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBuildingRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuildingResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Updates the building with the provided id
+      tags:
+        - buildings
+  /api/buildings/{id}/status:
+    patch:
+      operationId: update-building-status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBuildingStatusRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BuildingResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Updates the building status of the building with provided id
+      tags:
+        - buildings
+  /api/device-models:
+    get:
+      operationId: list-device-models
+      parameters:
+        - description: Lifecycle statuses to include. Defaults to planned and active, which keeps models that are no longer available/used out of the default lists without hiding them from a direct lookup.
+          explode: false
+          in: query
+          name: status
+          schema:
+            description: Lifecycle statuses to include. Defaults to planned and active, which keeps models that are no longer available/used out of the default lists without hiding them from a direct lookup.
+            items:
+              enum:
+                - planned
+                - active
+                - decommissioned
+                - archived
+              type: string
+            type: array
+        - description: Only return models of this device type. Omit it to list models of every type.
+          explode: false
+          in: query
+          name: deviceTypeId
+          schema:
+            description: Only return models of this device type. Omit it to list models of every type.
+            type: string
+        - description: Only return models made by this manufacturer. Omit it to list models of every manufacturer.
+          explode: false
+          in: query
+          name: manufacturerId
+          schema:
+            description: Only return models made by this manufacturer. Omit it to list models of every manufacturer.
+            type: string
+        - description: Only return models mounted this way. Omit it to list models however they are mounted.
+          explode: false
+          in: query
+          name: mounting
+          schema:
+            description: Only return models mounted this way. Omit it to list models however they are mounted.
+            enum:
+              - rack
+              - wall
+              - desktop
+              - din_rail
+              - ceiling
+              - pole
+              - embedded
+              - other
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/DeviceModelResponse"
+                type: array
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Returns all device models, optionally narrowed to a device type or a manufacturer
+      tags:
+        - device-models
+    post:
+      operationId: create-device-model
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDeviceModelRequest"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceModelResponse"
+          description: Created
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Creates a device model
+      tags:
+        - device-models
+  /api/device-models/{id}:
+    delete:
+      description: Refused while any device is of the model.
+      operationId: delete-device-model
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Deletes the device model with the provided id
+      tags:
+        - device-models
+    get:
+      operationId: get-device-model
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceModelResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Returns the device model with the provided id
+      tags:
+        - device-models
+    put:
+      operationId: update-device-model
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDeviceModelRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceModelResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Updates the device model with the provided id
+      tags:
+        - device-models
+  /api/device-models/{id}/status:
+    patch:
+      operationId: update-device-model-status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDeviceModelStatusRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceModelResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Updates the status of the device model with the provided id
+      tags:
+        - device-models
+  /api/device-types:
+    get:
+      operationId: list-device-types
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/DeviceTypeResponse"
+                type: array
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Returns all device types.
+      tags:
+        - device-types
+  /api/devices:
+    get:
+      operationId: list-devices
+      parameters:
+        - description: Lifecycle statuses to include. Defaults to planned and active.
+          explode: false
+          in: query
+          name: status
+          schema:
+            description: Lifecycle statuses to include. Defaults to planned and active.
+            items:
+              enum:
+                - planned
+                - active
+                - decommissioned
+                - archived
+              type: string
+            type: array
+        - description: Only return devices of this type, whether it comes from their model or not.
+          explode: false
+          in: query
+          name: deviceTypeId
+          schema:
+            description: Only return devices of this type, whether it comes from their model or not.
+            type: string
+        - description: Only return devices of this model.
+          explode: false
+          in: query
+          name: deviceModelId
+          schema:
+            description: Only return devices of this model.
+            type: string
+        - description: Only return devices whose model this manufacturer makes.
+          explode: false
+          in: query
+          name: manufacturerId
+          schema:
+            description: Only return devices whose model this manufacturer makes.
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/DeviceResponse"
+                type: array
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Returns all devices, optionally narrowed to a type, model or manufacturer
+      tags:
+        - devices
+    post:
+      description: Without a code, the device gets the next free code of its type.
+      operationId: create-device
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDeviceRequest"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceResponse"
+          description: Created
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Creates a device
+      tags:
+        - devices
+  /api/devices/{id}:
+    delete:
+      description: Its code is not handed out again.
+      operationId: delete-device
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Deletes the device with the provided id
+      tags:
+        - devices
+    get:
+      operationId: get-device
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Returns the device with the provided id
+      tags:
+        - devices
+    put:
+      operationId: update-device
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDeviceRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Updates the device with the provided id
+      tags:
+        - devices
+  /api/devices/{id}/status:
+    patch:
+      operationId: update-device-status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDeviceStatusRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeviceResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Updates the status of the device with the provided id
+      tags:
+        - devices
+  /api/locations:
+    get:
+      operationId: list-locations
+      parameters:
+        - description: Lifecycle statuses to include. Defaults to planned and active, which keeps decommissioned and archived locations off the map and out of the default lists without hiding them from a direct lookup.
+          explode: false
+          in: query
+          name: status
+          schema:
+            description: Lifecycle statuses to include. Defaults to planned and active, which keeps decommissioned and archived locations off the map and out of the default lists without hiding them from a direct lookup.
+            items:
+              enum:
+                - planned
+                - active
+                - decommissioned
+                - archived
+              type: string
+            type: array
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/LocationResponse"
+                type: array
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Returns all locations
+      tags:
+        - locations
+    post:
+      operationId: create-location
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateLocationRequest"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LocationResponse"
+          description: Created
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Creates a location
+      tags:
+        - locations
+  /api/locations/suggest:
+    post:
+      operationId: suggest-location
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SuggestLocationRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuggestLocationResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Suggests a location fitting provided area the best.
+      tags:
+        - locations
+  /api/locations/{id}:
+    delete:
+      operationId: delete-location
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Deletes the location with the provided id
+      tags:
+        - locations
+    get:
+      operationId: get-location
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LocationResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Returns location with the provided id
+      tags:
+        - locations
+    put:
+      operationId: update-location
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateLocationRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LocationResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Updates the location with the provided id
+      tags:
+        - locations
+  /api/locations/{id}/status:
+    patch:
+      operationId: update-location-status
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateLocationStatusRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LocationResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Updates the location status of the location with provided id
+      tags:
+        - locations
+  /api/manufacturers:
+    get:
+      operationId: list-manufacturers
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/ManufacturerResponse"
+                type: array
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Returns all manufacturers
+      tags:
+        - manufacturers
+    post:
+      operationId: create-manufacturer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ManufacturerRequest"
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManufacturerResponse"
+          description: Created
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Creates a manufacturer
+      tags:
+        - manufacturers
+  /api/manufacturers/{id}:
+    delete:
+      description: Refused while any device model is made by the manufacturer.
+      operationId: delete-manufacturer
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No Content
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Deletes the manufacturer with the provided id
+      tags:
+        - manufacturers
+    get:
+      operationId: get-manufacturer
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManufacturerResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Returns the manufacturer with the provided id
+      tags:
+        - manufacturers
+    put:
+      operationId: update-manufacturer
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ManufacturerRequest"
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ManufacturerResponse"
+          description: OK
+        default:
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/ErrorModel"
+          description: Error
+      security:
+        - session: []
+        - apiKey: []
+      summary: Updates the manufacturer with the provided id
+      tags:
+        - manufacturers
+

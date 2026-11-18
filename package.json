@@ -1,0 +1,46 @@
+{
+  "name": "@nimap/mcp",
+  "version": "0.1.0",
+  "description": "MCP server for nimap network documentation",
+  "license": "AGPL-3.0-only",
+  "type": "module",
+  "bin": {
+    "nimap-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.js"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "generate": "pnpm dlx openapi-typescript@7.13.0 nimap-openapi.yaml -o src/api/schema.ts",
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "test": "node --test \"src/**/*.test.ts\""
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.21.0",
+      "onFail": "download"
+    }
+  },
+  "packageManager": "pnpm@12.21.0",
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "prettier": "3.10.1",
+    "typescript": "^7.0.2"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "^2.4.0",
+    "openapi-fetch": "^0.17.0",
+    "yaml": "^2.9.1",
+    "zod": "^4.6.7"
+  }
+}
