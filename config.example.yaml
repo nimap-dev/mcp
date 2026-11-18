@@ -1,7 +1,6 @@
 server: https://nimap.example.com
 apiKey: nimap_xxx
 allowWrite: false
-blacklistBlocksWrite: false
 blacklist:
   fields: []
   objectFields: {}

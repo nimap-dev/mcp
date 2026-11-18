@@ -20,7 +20,7 @@ serveStdio(
       { name: 'nimap', version },
       { capabilities: { tools: {} } },
     )
-    registerDeviceTools(server, api, config.blacklist)
+    registerDeviceTools(server, api, config)
     registerDeviceModelTools(server, api, config.blacklist)
     registerManufacturerTools(server, api, config.blacklist)
     return server

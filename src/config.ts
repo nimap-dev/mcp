@@ -12,7 +12,6 @@ const ConfigSchema = z.strictObject({
   server: z.url(),
   apiKey: z.string().startsWith('nimap_'),
   allowWrite: z.boolean().default(false),
-  blacklistBlocksWrite: z.boolean().default(false),
   blacklist: z
     .strictObject({
       fields: z.array(z.string()).default([]),

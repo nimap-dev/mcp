@@ -10,8 +10,15 @@ import {
 export const HIDDEN_NOTE =
   'Fields shown as "[hidden]" exist but are hidden by configuration; never guess their value.'
 
+export const statusEnum = z.enum([
+  'planned',
+  'active',
+  'decommissioned',
+  'archived',
+])
+
 export const statusSchema = z
-  .array(z.enum(['planned', 'active', 'decommissioned', 'archived']))
+  .array(statusEnum)
   .optional()
   .describe('Lifecycle statuses to include. Defaults to planned and active.')
 
@@ -32,7 +39,10 @@ export async function toolResult(
   type: ObjectType,
   request: () => Promise<{
     data?: unknown
-    error?: { detail?: string }
+    error?: {
+      detail?: string
+      errors?: { location?: string; message?: string }[] | null
+    }
     response: Response
   }>,
 ): Promise<CallToolResult> {
@@ -41,10 +51,17 @@ export async function toolResult(
   }
 
   const { data, error, response } = await request()
-  if (data === undefined) {
-    return errorResult(
-      `nimap API error ${response.status}: ${error?.detail ?? response.statusText}`,
+  if (!response.ok) {
+    const details = (error?.errors ?? []).map(
+      (e) => `\n- ${e.location ?? ''}: ${e.message ?? ''}`,
     )
+    return errorResult(
+      `nimap API error ${response.status}: ${error?.detail ?? response.statusText}${details.join('')}`,
+    )
+  }
+
+  if (data === undefined) {
+    return { content: [{ type: 'text', text: 'Done.' }] }
   }
 
   const filtered = Array.isArray(data)
