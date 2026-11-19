@@ -21,8 +21,8 @@ serveStdio(
       { capabilities: { tools: {} } },
     )
     registerDeviceTools(server, api, config)
-    registerDeviceModelTools(server, api, config.blacklist)
-    registerManufacturerTools(server, api, config.blacklist)
+    registerDeviceModelTools(server, api, config)
+    registerManufacturerTools(server, api, config)
     return server
   },
   { onerror: (error) => console.error(error) },

@@ -2,6 +2,7 @@ import type { CallToolResult } from '@modelcontextprotocol/server'
 import * as z from 'zod'
 import {
   filterObject,
+  HIDDEN,
   isHidden,
   type BlacklistConfig,
   type ObjectType,
@@ -29,6 +30,32 @@ export const idSchema = z
     'id must be a UUID',
   )
   .describe('The id (UUID) of the object.')
+
+export const textSchema = z.string().refine((value) => value !== HIDDEN, {
+  message: `"${HIDDEN}" only marks a hidden value; leave the field out to keep it`,
+})
+
+export const UPDATE_NOTE =
+  'Send only the fields to change; left out fields keep their value. To empty optional fields, list them in clear.'
+
+export function clearSchema<T extends object>(fields: T) {
+  const names = Object.keys(fields) as [
+    Extract<keyof T, string>,
+    ...Extract<keyof T, string>[],
+  ]
+  return z.array(z.enum(names)).optional().describe('Optional fields to empty.')
+}
+
+export function mergeChanges<T extends object, C extends object>(
+  current: T,
+  changes: C,
+  clear: readonly string[] = [],
+) {
+  const merged = { ...current, ...changes }
+  return Object.fromEntries(
+    Object.entries(merged).filter(([field]) => !clear.includes(field)),
+  ) as typeof merged
+}
 
 function errorResult(text: string): CallToolResult {
   return { isError: true, content: [{ type: 'text', text }] }
